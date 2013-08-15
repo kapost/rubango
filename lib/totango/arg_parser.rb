@@ -20,7 +20,7 @@ module Totango
 
       def parses_arg(name, *aliases)
         register_named_arg! name
-        attr_reader name
+        # attr_reader name
 
         aliases.unshift(name).each do |argname|
           registered_args[argname] = name
@@ -42,20 +42,30 @@ module Totango
     parses_arg :sdr_odn, :odn, :org_name, :organization_name
     parses_arg :sdr_m, :m, :mod, :module
     parses_arg :sdr_u, :u, :user
-    parses_arg "sdr_o.Create Date".to_sym, :cd, :create_date
+    parses_arg :sdr_cd, :cd, :create_date
 
     def to_params
       ArgParser.named_args.map do |arg|
-        [arg, CGI.escape(self[arg].to_s)].join("=")
+        if arg == :sdr_cd
+          key = "sdr_o.Create%20Date" 
+          val = self[arg].to_s
+        else
+          key = arg
+          val = CGI.escape(self[arg].to_s)
+        end
+        [key, val].join("=")
       end.join("&")
     end
 
     def [](arg)
-      instance_variable_get :"@#{arg}"
+      @vals[arg] if @vals
+      # instance_variable_get :"@#{arg}"
     end
 
     def []=(arg, val)
-      instance_variable_set :"@#{arg}", val
+      @vals ||= {}
+      @vals[arg] = val
+      # instance_variable_set :"@#{arg}", val
     end
   end
 end

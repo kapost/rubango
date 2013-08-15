@@ -6,17 +6,22 @@ describe Totango::Client do
   end
 
   it "builds a valid url when sent correct data" do
+    t = Time.parse "Thu Nov 29 14:33:20 GMT 2001"
     valid_url  = "http://sdr.totango.com/pixel.gif/?sdr_s=lolwut"\
-                 "&sdr_a=fake+activity&sdr_o=legit+organization"\
-                 "&sdr_m=awesome+module&sdr_u=annoying+user"\
-                 "&sdr_ofid=1234"
+                 "&sdr_a=fake+activity"\
+                 "&sdr_o=1234"\
+                 "&sdr_odn=legit+organization"\
+                 "&sdr_m=awesome+module"\
+                 "&sdr_u=annoying+user"\
+                 "&sdr_o.Create%20Date=2001-11-29T06:33:20-08:00"
 
     @client.build_url({
       :sdr_a => "fake activity",
-      :sdr_o => "legit organization",
+      :sdr_odn => "legit organization",
       :sdr_m => "awesome module",
       :sdr_u => "annoying user",
-      :sdr_ofid => "1234"
+      :sdr_o => "1234",
+      :sdr_cd => t.iso8601
     }).should eql(valid_url)
   end
 
@@ -31,9 +36,9 @@ describe Totango::Client do
     it {@client.build_url(:act => "activity").should match(/sdr_a=activity/)}
     it {@client.build_url(:activity => "activity").should match(/sdr_a=activity/)}
 
-    it {@client.build_url(:o => "org").should match(/sdr_o=org/)}
-    it {@client.build_url(:org => "org").should match(/sdr_o=org/)}
-    it {@client.build_url(:organization => "org").should match(/sdr_o=org/)}
+    it {@client.build_url(:odn => "org").should match(/sdr_odn=org/)}
+    it {@client.build_url(:org_name => "org").should match(/sdr_odn=org/)}
+    it {@client.build_url(:organization_name => "org").should match(/sdr_odn=org/)}
 
     it {@client.build_url(:m => "mod").should match(/sdr_m=mod/)}
     it {@client.build_url(:mod => "mod").should match(/sdr_m=mod/)}
@@ -42,8 +47,12 @@ describe Totango::Client do
     it {@client.build_url(:u => "user").should match(/sdr_u=user/)}
     it {@client.build_url(:user => "user").should match(/sdr_u=user/)}
 
-    it {@client.build_url(:ofid => "org").should match(/sdr_ofid=org/)}
-    it {@client.build_url(:organization_foreign_id => "org").should match(/sdr_ofid=org/)}
+    it {@client.build_url(:o => "123").should match(/sdr_o=123/)}
+    it {@client.build_url(:org_id => "123").should match(/sdr_o=123/)}
+    
+    it {@client.build_url(:cd => "2001-11-29T06:33:20-08:00").should match(/sdr_o.Create%20Date=2001-11-29T06:33:20-08:00/)}
+    it {@client.build_url(:create_date => "2001-11-29T06:33:20-08:00").should match(/sdr_o.Create%20Date=2001-11-29T06:33:20-08:00/)}
+    
   end
 
   describe "Tracking" do
