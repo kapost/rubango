@@ -38,10 +38,11 @@ module Totango
     end
 
     parses_arg :sdr_a, :a, :act, :activity
-    parses_arg :sdr_o, :o, :org, :organization
+    parses_arg :sdr_o, :o, :org_id, :organization_id
+    parses_arg :sdr_odn, :odn, :org_name, :organization_name
     parses_arg :sdr_m, :m, :mod, :module
     parses_arg :sdr_u, :u, :user
-    parses_arg :sdr_ofid, :ofid, :organization_foreign_id
+    parses_arg "sdr_o.Create Date".to_sym, :cd, :create_date
 
     def to_params
       ArgParser.named_args.map do |arg|
